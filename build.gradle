@@ -1,16 +1,55 @@
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
-    id 'java'
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
 group 'com.comarch.tomasz.kosacki'
 version '1.0-SNAPSHOT'
 
+apply plugin: 'java'
+apply plugin: 'application'
+
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'io.dropwizard:dropwizard-core:1.3.12'
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
+    compile group: 'org.mongodb.morphia', name: 'morphia', version: '1.3.2'
+
+    testCompile 'junit:junit:4.12'
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.4.2")
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.2'
+    testCompile group: 'com.github.fakemongo', name: 'fongo', version: '2.1.1'
+    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.3.12'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
+}
+
+mainClassName = 'com.comarch.tomasz.kosacki.TagsServiceApp'
+
+run {
+    args = ['server', 'config.yml']
+}
+
+shadowJar {
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+    manifest {
+        attributes 'Implementation-Title': rootProject.name
+        attributes 'Implementation-Version': rootProject.version
+        attributes 'Implementation-Vendor-Id': rootProject.group
+        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        attributes 'Built-By': InetAddress.localHost.hostName
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+    archiveName 'sample-dropwizard.jar'
 }
