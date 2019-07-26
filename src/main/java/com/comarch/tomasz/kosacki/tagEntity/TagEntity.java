@@ -5,22 +5,25 @@ import org.mongodb.morphia.annotations.Id;
 import org.mongodb.morphia.annotations.IndexOptions;
 import org.mongodb.morphia.annotations.Indexed;
 
-@Entity
+@Entity(noClassnameStored = true)
 public class TagEntity {
 
     @Id
     @Indexed(options = @IndexOptions(unique = true))
     private String tagId;
+
     private String userId;
     private String tagName;
+    private String tagValue;
 
     public TagEntity() {
     }
 
-    public TagEntity(String tagId, String userId, String tagName) {
+    public TagEntity(String tagId, String userId, String tagName, String tagValue) {
         this.tagId = tagId;
         this.userId = userId;
         this.tagName = tagName;
+        this.tagValue = tagValue;
     }
 
     public String getTagId() {
@@ -45,5 +48,13 @@ public class TagEntity {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public String getTagValue() {
+        return tagValue;
+    }
+
+    public void setTagValue(String tagValue) {
+        this.tagValue = tagValue;
     }
 }

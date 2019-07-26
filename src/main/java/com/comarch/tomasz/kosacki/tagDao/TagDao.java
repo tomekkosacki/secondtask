@@ -8,7 +8,7 @@ public interface TagDao {
 
     TagEntity getTagById(String tagId);
 
-    List<TagEntity> getTagBy(String tagId, String userId, String tagName);
+    List<TagEntity> getTagBy(String tagId, String userId, String tagName, String tagValue);
 
     void createTag(TagEntity newTag);
 

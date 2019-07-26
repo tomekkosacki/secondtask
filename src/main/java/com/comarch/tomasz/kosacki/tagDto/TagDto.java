@@ -10,13 +10,16 @@ public class TagDto implements Serializable {
     private String userId;
     @NotEmpty
     private String tagName;
+    @NotEmpty
+    private String tagValue;
 
     TagDto() {
     }
 
-    public TagDto(String userId, String tagName) {
+    public TagDto(String userId, String tagName, String tagValue) {
         this.userId = userId;
         this.tagName = tagName;
+        this.tagValue = tagValue;
     }
 
     public String getUserId() {
@@ -33,5 +36,13 @@ public class TagDto implements Serializable {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    public String getTagValue() {
+        return tagValue;
+    }
+
+    public void setTagValue(String tagValue) {
+        this.tagValue = tagValue;
     }
 }
