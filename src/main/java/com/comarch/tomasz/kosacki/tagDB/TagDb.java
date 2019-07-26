@@ -5,6 +5,7 @@ import com.comarch.tomasz.kosacki.tagEntity.TagEntity;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Criteria;
 import org.mongodb.morphia.query.Query;
+import org.mongodb.morphia.query.UpdateOperations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,5 +67,11 @@ public class TagDb implements TagDao {
     @Override
     public void updateTag(String tagId, TagEntity updatedValue) {
 
+        Query query = this.datastore.createQuery(TagEntity.class).field("tagId"). equal(tagId);
+        UpdateOperations<TagEntity> tagEntityUpdateOperations = this.datastore.createUpdateOperations(TagEntity.class)
+                .set("userId", updatedValue.getUserId())
+                .set("tagName", updatedValue.getTagName())
+                .set("tagValue", updatedValue.getTagValue());
+        this.datastore.update(query, tagEntityUpdateOperations);
     }
 }

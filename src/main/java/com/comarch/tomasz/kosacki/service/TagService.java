@@ -1,6 +1,7 @@
 package com.comarch.tomasz.kosacki.service;
 
 import com.comarch.tomasz.kosacki.serviceException.AppException;
+import com.comarch.tomasz.kosacki.serviceException.DuplicateKeyExceptionTagId;
 import com.comarch.tomasz.kosacki.serviceException.NullArgumentException;
 import com.comarch.tomasz.kosacki.serviceException.TagEntityNotFoundException;
 import com.comarch.tomasz.kosacki.tagDB.TagDb;
@@ -27,14 +28,14 @@ public class TagService {
     public TagEntity getTagById(String tagId) throws AppException {
 
         if (tagId == null) {
-            logger.error("TagId is null");
+            logger.error("Argument is null");
             throw new NullArgumentException();
         }
         TagEntity tagEntity = findTagById(tagId);
         if (tagEntity != null) {
             return tagEntity;
         }
-        logger.error("Tag not found");
+        logger.error("Tag id: {} not found", tagId);
         throw new TagEntityNotFoundException(tagId);
     }
 
@@ -51,31 +52,44 @@ public class TagService {
     public void createTag(TagEntity newTag) {
 
         if (newTag == null) {
-            logger.error("Argument can not be null");
+            logger.error("Argument is null");
             throw new NullArgumentException();
         }
 
-        String newTagId;
-        do {
-            newTagId = UUID.randomUUID().toString();
-        } while (findTagById(newTagId) != null);
-
+        String newTagId = UUID.randomUUID().toString();
+        if (findTagById(newTagId) != null) {
+            logger.error("Duplicate key exception in tagId");
+            throw new DuplicateKeyExceptionTagId();
+        }
         newTag.setTagId(newTagId);
-
         this.tagDb.createTag(newTag);
     }
 
     public void deleteTag(String tagId) throws AppException {
 
         if (tagId == null) {
-            logger.error("Argument can not be null");
+            logger.error("Argument is null");
             throw new NullArgumentException();
         }
         TagEntity tagEntity = findTagById(tagId);
         if (tagEntity != null) {
             this.tagDb.deleteTag(tagEntity);
         } else {
-            logger.error("Tag not found");
+            logger.error("Tag id: {} not found", tagId);
+            throw new TagEntityNotFoundException(tagId);
+        }
+    }
+
+    public void updateTag(String tagId, TagEntity updatedValue) throws AppException {
+
+        if (tagId == null || updatedValue == null) {
+            logger.error("Argument is null");
+            throw new NullArgumentException();
+        }
+        if (findTagById(tagId) != null){
+            this.tagDb.updateTag(tagId, updatedValue);
+        } else {
+            logger.error("Tag id: {} not found", tagId);
             throw new TagEntityNotFoundException(tagId);
         }
     }
