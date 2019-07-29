@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -41,11 +42,24 @@ public class TagResources {
 
     @GET
     @Timed
+    @Path("/user/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTagByUserId(@NotNull @PathParam("id") String userId) {
+
+        logger.info("Get tag by user id: {}", userId);
+        List<TagEntity> tagEntityList = this.tagService.getTagsByUserId(userId);
+        List<TagDto> tagDto = this.mapper.tagEntityListToTagDtoList(tagEntityList);
+        return Response.ok(tagDto).build();
+    }
+
+    @GET
+    @Timed
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTagBy(@QueryParam("tagId") String tagId,
                              @QueryParam("userId") String userId,
                              @QueryParam("tagName") String tagName,
-                             @QueryParam("tagValue") String tagValue){
+                             @QueryParam("tagValue") String tagValue) {
+
         logger.info("Get tag by");
         List<TagEntity> tagEntityList = this.tagService.getTagBy(tagId, userId, tagName, tagValue);
         List<TagDto> tagDtoList = this.mapper.tagEntityListToTagDtoList(tagEntityList);

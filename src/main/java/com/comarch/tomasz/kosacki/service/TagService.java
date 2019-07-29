@@ -39,6 +39,16 @@ public class TagService {
         throw new TagEntityNotFoundException(tagId);
     }
 
+    public List<TagEntity> getTagsByUserId(String userId) {
+
+        if (userId == null) {
+            logger.error("Argument is null");
+            throw new NullArgumentException();
+        }
+        List<TagEntity> tagEntityList = this.tagDb.getTagsByUserId(userId);
+        return tagEntityList;
+    }
+
     public List<TagEntity> getTagBy(String tagId, String userId, String tagName, String tagValue) throws AppException {
 
         List<TagEntity> tagEntityList = this.tagDb.getTagBy(tagId, userId, tagName, tagValue);
@@ -86,7 +96,7 @@ public class TagService {
             logger.error("Argument is null");
             throw new NullArgumentException();
         }
-        if (findTagById(tagId) != null){
+        if (findTagById(tagId) != null) {
             this.tagDb.updateTag(tagId, updatedValue);
         } else {
             logger.error("Tag id: {} not found", tagId);

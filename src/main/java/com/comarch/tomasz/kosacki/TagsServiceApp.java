@@ -22,7 +22,7 @@ public class TagsServiceApp extends Application<TagServiceConfiguration> {
     }
 
     @Override
-    public void run(TagServiceConfiguration configuration, Environment environment) throws Exception {
+    public void run(TagServiceConfiguration configuration, Environment environment) {
 
         final Morphia morphia = new Morphia();
         morphia.map(TagEntity.class);
