@@ -32,8 +32,8 @@ public class TagsServiceApp extends Application<TagServiceConfiguration> {
 
         TagDb tagDb =new TagDb(datastore);
         TagMapper mapper = new TagMapper();
-        TagService tagService = new TagService(tagDb);
-        final TagResources tagResources = new TagResources(mapper,tagService);
+        TagService tagService = new TagService(tagDb, mapper);
+        final TagResources tagResources = new TagResources(tagService);
 
         environment.jersey().register(tagResources);
         environment.jersey().register(new AppExceptionMapper());

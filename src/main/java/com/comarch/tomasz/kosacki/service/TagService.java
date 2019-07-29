@@ -1,14 +1,17 @@
 package com.comarch.tomasz.kosacki.service;
 
+import com.comarch.tomasz.kosacki.mapper.TagMapper;
 import com.comarch.tomasz.kosacki.serviceException.AppException;
 import com.comarch.tomasz.kosacki.serviceException.DuplicateKeyExceptionTagId;
 import com.comarch.tomasz.kosacki.serviceException.NullArgumentException;
 import com.comarch.tomasz.kosacki.serviceException.TagEntityNotFoundException;
 import com.comarch.tomasz.kosacki.tagDB.TagDb;
+import com.comarch.tomasz.kosacki.tagDto.TagDto;
 import com.comarch.tomasz.kosacki.tagEntity.TagEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,16 +19,18 @@ public class TagService {
 
     private TagDb tagDb;
     private Logger logger = LoggerFactory.getLogger(getClass());
+    private TagMapper mapper;
 
     public TagService() {
     }
 
-    public TagService(TagDb tagDb) {
+    public TagService(TagDb tagDb, TagMapper mapper) {
 
         this.tagDb = tagDb;
+        this.mapper = mapper;
     }
 
-    public TagEntity getTagById(String tagId) throws AppException {
+    public TagDto getTagById(String tagId) throws AppException {
 
         if (tagId == null) {
             logger.error("Argument is null");
@@ -33,46 +38,50 @@ public class TagService {
         }
         TagEntity tagEntity = findTagById(tagId);
         if (tagEntity != null) {
-            return tagEntity;
+            return this.mapper.tagEntityToTagDto(tagEntity);
         }
         logger.error("Tag id: {} not found", tagId);
-        throw new TagEntityNotFoundException(tagId);
+        return new TagDto();
     }
 
-    public List<TagEntity> getTagsByUserId(String userId) {
+    public List<TagDto> getTagsByUserId(String userId) throws AppException {
 
         if (userId == null) {
             logger.error("Argument is null");
             throw new NullArgumentException();
         }
         List<TagEntity> tagEntityList = this.tagDb.getTagsByUserId(userId);
-        return tagEntityList;
+        if (!tagEntityList.isEmpty()) {
+            return this.mapper.tagEntityListToTagDtoList(tagEntityList);
+        }
+        logger.error("Tag not found");
+        return Collections.emptyList();
     }
 
-    public List<TagEntity> getTagBy(String tagId, String userId, String tagName, String tagValue) throws AppException {
+    public List<TagDto> getTagBy(String tagId, String userId, String tagName, String tagValue) throws AppException {
 
         List<TagEntity> tagEntityList = this.tagDb.getTagBy(tagId, userId, tagName, tagValue);
         if (!tagEntityList.isEmpty()) {
-            return tagEntityList;
+            return this.mapper.tagEntityListToTagDtoList(tagEntityList);
         }
-        logger.error("User not found");
-        throw new TagEntityNotFoundException("");
-    }
+        logger.error("Tag not found");
+        return Collections.emptyList();    }
 
-    public void createTag(TagEntity newTag) {
+    public void createTag(TagDto newTag) {
 
         if (newTag == null) {
             logger.error("Argument is null");
             throw new NullArgumentException();
         }
+        TagEntity tagEntity = this.mapper.tagDtoToTagEntity(newTag);
 
         String newTagId = UUID.randomUUID().toString();
         if (findTagById(newTagId) != null) {
             logger.error("Duplicate key exception in tagId");
             throw new DuplicateKeyExceptionTagId();
         }
-        newTag.setTagId(newTagId);
-        this.tagDb.createTag(newTag);
+        tagEntity.setTagId(newTagId);
+        this.tagDb.createTag(tagEntity);
     }
 
     public void deleteTag(String tagId) throws AppException {
@@ -90,14 +99,15 @@ public class TagService {
         }
     }
 
-    public void updateTag(String tagId, TagEntity updatedValue) throws AppException {
+    public void updateTag(String tagId, TagDto updatedValue) throws AppException {
 
         if (tagId == null || updatedValue == null) {
             logger.error("Argument is null");
             throw new NullArgumentException();
         }
         if (findTagById(tagId) != null) {
-            this.tagDb.updateTag(tagId, updatedValue);
+            TagEntity tagEntity = this.mapper.tagDtoToTagEntity(updatedValue);
+            this.tagDb.updateTag(tagId, tagEntity);
         } else {
             logger.error("Tag id: {} not found", tagId);
             throw new TagEntityNotFoundException(tagId);

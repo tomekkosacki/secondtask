@@ -4,7 +4,6 @@ import com.comarch.tomasz.kosacki.tagDao.TagDao;
 import com.comarch.tomasz.kosacki.tagEntity.TagEntity;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Criteria;
-import org.mongodb.morphia.query.FindOptions;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 

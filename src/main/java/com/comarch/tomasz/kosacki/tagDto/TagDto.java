@@ -13,7 +13,7 @@ public class TagDto implements Serializable {
     @NotEmpty
     private String tagValue;
 
-    TagDto() {
+    public TagDto() {
     }
 
     public TagDto(String userId, String tagName, String tagValue) {
