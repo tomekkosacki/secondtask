@@ -1,13 +1,11 @@
 package com.comarch.tomasz.kosacki.service;
 
 import com.comarch.tomasz.kosacki.mapper.TagMapper;
-import com.comarch.tomasz.kosacki.serviceException.AppException;
-import com.comarch.tomasz.kosacki.serviceException.DuplicateKeyExceptionTagId;
-import com.comarch.tomasz.kosacki.serviceException.NullArgumentException;
-import com.comarch.tomasz.kosacki.serviceException.TagEntityNotFoundException;
+import com.comarch.tomasz.kosacki.serviceException.*;
 import com.comarch.tomasz.kosacki.tagDB.TagDb;
 import com.comarch.tomasz.kosacki.tagDto.TagDto;
 import com.comarch.tomasz.kosacki.tagEntity.TagEntity;
+import com.mongodb.DuplicateKeyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +18,6 @@ public class TagService {
     private TagDb tagDb;
     private Logger logger = LoggerFactory.getLogger(getClass());
     private TagMapper mapper;
-
-    public TagService() {
-    }
 
     public TagService(TagDb tagDb, TagMapper mapper) {
 
@@ -81,7 +76,12 @@ public class TagService {
             throw new DuplicateKeyExceptionTagId();
         }
         tagEntity.setTagId(newTagId);
-        this.tagDb.createTag(tagEntity);
+        try {
+            this.tagDb.createTag(tagEntity);
+        } catch (DuplicateKeyException ex) {
+            logger.error("Tag already exist with that name: {} for this user: {}", tagEntity.getTagName(), tagEntity.getUserId());
+            throw new DuplicateTagNameException();
+        }
     }
 
     public void deleteTag(String tagId) throws AppException {
@@ -107,7 +107,12 @@ public class TagService {
         }
         if (findTagById(tagId) != null) {
             TagEntity tagEntity = this.mapper.tagDtoToTagEntity(updatedValue);
-            this.tagDb.updateTag(tagId, tagEntity);
+            try {
+                this.tagDb.updateTag(tagId, tagEntity);
+            } catch (DuplicateKeyException ex) {
+                logger.error("Tag already exist with that name: {} for this user: {}", tagEntity.getTagName(), tagEntity.getUserId());
+                throw new DuplicateTagNameException();
+            }
         } else {
             logger.error("Tag id: {} not found", tagId);
             throw new TagEntityNotFoundException(tagId);

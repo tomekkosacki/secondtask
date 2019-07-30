@@ -6,6 +6,8 @@ import com.comarch.tomasz.kosacki.tagDto.TagDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -23,6 +25,7 @@ public class TagResources {
         this.tagService = tagService;
     }
 
+    @PermitAll
     @GET
     @Timed
     @Path("/{id}")
@@ -34,6 +37,7 @@ public class TagResources {
         return Response.ok(tagDto).build();
     }
 
+    @PermitAll
     @GET
     @Timed
     @Path("/user/{id}")
@@ -45,6 +49,7 @@ public class TagResources {
         return Response.ok(tagDto).build();
     }
 
+    @PermitAll
     @GET
     @Timed
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,6 +63,7 @@ public class TagResources {
         return Response.ok(tagDtoList).build();
     }
 
+    @PermitAll
     @POST
     @Timed
     @Path("/add")
@@ -70,6 +76,7 @@ public class TagResources {
         return Response.ok().build();
     }
 
+    @PermitAll
     @DELETE
     @Timed
     @Path("/delete/{id}")
@@ -82,6 +89,7 @@ public class TagResources {
         return Response.ok().build();
     }
 
+    @PermitAll
     @PUT
     @Timed
     @Path("/update/{id}")

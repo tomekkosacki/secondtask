@@ -1,17 +1,14 @@
 package com.comarch.tomasz.kosacki.tagEntity;
 
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.IndexOptions;
-import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.*;
 
 @Entity(noClassnameStored = true)
+@Indexes(@Index(fields = {@Field("userId"), @Field("tagName")}, options = @IndexOptions(unique = true)))
 public class TagEntity {
 
     @Id
     @Indexed(options = @IndexOptions(unique = true))
     private String tagId;
-
     private String userId;
     private String tagName;
     private String tagValue;

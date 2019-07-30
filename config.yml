@@ -7,3 +7,6 @@ server:
   adminConnectors:
     - type: http
       port: 9003
+
+password: "password"
+dbname: "morphia_user"
