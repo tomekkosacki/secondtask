@@ -7,7 +7,6 @@ import org.mongodb.morphia.annotations.*;
 public class TagEntity {
 
     @Id
-    @Indexed(options = @IndexOptions(unique = true))
     private String tagId;
     private String userId;
     private String tagName;

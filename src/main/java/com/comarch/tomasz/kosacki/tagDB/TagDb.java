@@ -27,14 +27,6 @@ public class TagDb implements TagDao {
     }
 
     @Override
-    public List<TagEntity> getTagsByUserId(String userId) {
-        return datastore.createQuery(TagEntity.class)
-                .field("userId").equal(userId)
-                .asList();
-    }
-
-
-    @Override
     public List<TagEntity> getTagBy(String tagId, String userId, String tagName, String tagValue) {
 
         List<Criteria> criteriaList = new ArrayList<>();

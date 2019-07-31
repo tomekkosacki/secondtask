@@ -39,28 +39,15 @@ public class TagService {
         return new TagDto();
     }
 
-    public List<TagDto> getTagsByUserId(String userId) throws AppException {
+    public List<TagDto> getTagBy(String tagId, String userId, String tagName, String tagValue) throws AppException {
 
-        if (userId == null) {
-            logger.error("Argument is null");
-            throw new NullArgumentException();
-        }
-        List<TagEntity> tagEntityList = this.tagDb.getTagsByUserId(userId);
-        if (!tagEntityList.isEmpty()) {
+        List<TagEntity> tagEntityList = this.tagDb.getTagBy(tagId, userId, tagName, tagValue);
+        if (tagEntityList == null || !tagEntityList.isEmpty()) {
             return this.mapper.tagEntityListToTagDtoList(tagEntityList);
         }
         logger.error("Tag not found");
         return Collections.emptyList();
     }
-
-    public List<TagDto> getTagBy(String tagId, String userId, String tagName, String tagValue) throws AppException {
-
-        List<TagEntity> tagEntityList = this.tagDb.getTagBy(tagId, userId, tagName, tagValue);
-        if (!tagEntityList.isEmpty()) {
-            return this.mapper.tagEntityListToTagDtoList(tagEntityList);
-        }
-        logger.error("Tag not found");
-        return Collections.emptyList();    }
 
     public void createTag(TagDto newTag) {
 
@@ -71,10 +58,6 @@ public class TagService {
         TagEntity tagEntity = this.mapper.tagDtoToTagEntity(newTag);
 
         String newTagId = UUID.randomUUID().toString();
-        if (findTagById(newTagId) != null) {
-            logger.error("Duplicate key exception in tagId");
-            throw new DuplicateKeyExceptionTagId();
-        }
         tagEntity.setTagId(newTagId);
         try {
             this.tagDb.createTag(tagEntity);
