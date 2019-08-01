@@ -10,6 +10,7 @@ import com.comarch.tomasz.kosacki.resources.TagResources;
 import com.comarch.tomasz.kosacki.service.TagService;
 import com.comarch.tomasz.kosacki.serviceException.AppExceptionMapper;
 import com.comarch.tomasz.kosacki.tagDB.TagDb;
+import com.comarch.tomasz.kosacki.tagDao.TagDao;
 import com.comarch.tomasz.kosacki.tagEntity.TagEntity;
 import com.mongodb.MongoClient;
 import io.dropwizard.Application;
@@ -37,9 +38,9 @@ public class TagsServiceApp extends Application<TagServiceConfiguration> {
         final Datastore datastore = morphia.createDatastore(mongoClient, configuration.getDbname());
         datastore.ensureIndexes();
 
-        TagDb tagDb =new TagDb(datastore);
+        TagDao tagDao = new TagDb(datastore);
         TagMapper mapper = new TagMapper();
-        TagService tagService = new TagService(tagDb, mapper);
+        TagService tagService = new TagService(tagDao, mapper);
         final TagResources tagResources = new TagResources(tagService);
 
         environment.jersey().register(tagResources);
