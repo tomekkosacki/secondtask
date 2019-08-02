@@ -4,6 +4,7 @@ import com.comarch.tomasz.kosacki.tagDao.TagDao;
 import com.comarch.tomasz.kosacki.tagEntity.TagEntity;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Criteria;
+import org.mongodb.morphia.query.FindOptions;
 import org.mongodb.morphia.query.Query;
 import org.mongodb.morphia.query.UpdateOperations;
 
@@ -27,7 +28,7 @@ public class TagDb implements TagDao {
     }
 
     @Override
-    public List<TagEntity> getTagBy(String tagId, String userId, String tagName, String tagValue) {
+    public List<TagEntity> getTagBy(String tagId, String userId, String tagName, String tagValue, int skip, int limit) {
 
         List<Criteria> criteriaList = new ArrayList<>();
         Query<TagEntity> query = datastore.createQuery(TagEntity.class);
@@ -46,7 +47,9 @@ public class TagDb implements TagDao {
         }
         query.and(criteriaList.toArray(new Criteria[0]));
         return query.order()
-                .asList();
+                .asList(new FindOptions()
+                .skip(skip)
+                .limit(limit));
     }
 
     @Override

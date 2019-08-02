@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -47,10 +48,12 @@ public class TagResources {
                              @QueryParam("userId") String userId,
                              @QueryParam("tagName") String tagName,
                              @QueryParam("tagValue") String tagValue,
+                             @QueryParam("skip") @Min(0) @DefaultValue("0") int skip,
+                             @QueryParam("limit") @Min(0) @DefaultValue("0") int limit,
                              @Auth AuthUser user) {
 
         logger.info("Get tag by, user name: {}", user.getName());
-        List<TagDto> tagDtoList = this.tagService.getTagBy(tagId, userId, tagName, tagValue);
+        List<TagDto> tagDtoList = this.tagService.getTagBy(tagId, userId, tagName, tagValue, skip, limit);
         return Response.ok(tagDtoList).build();
     }
 

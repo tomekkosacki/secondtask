@@ -42,9 +42,9 @@ public class TagService {
         return new TagDto();
     }
 
-    public List<TagDto> getTagBy(String tagId, String userId, String tagName, String tagValue) throws AppException {
+    public List<TagDto> getTagBy(String tagId, String userId, String tagName, String tagValue, int skip, int limit) throws AppException {
 
-        List<TagEntity> tagEntityList = this.tagDao.getTagBy(tagId, userId, tagName, tagValue);
+        List<TagEntity> tagEntityList = this.tagDao.getTagBy(tagId, userId, tagName, tagValue, skip, limit);
         if (tagEntityList != null && !tagEntityList.isEmpty()) {
             return this.mapper.tagEntityListToTagDtoList(tagEntityList);
         }
